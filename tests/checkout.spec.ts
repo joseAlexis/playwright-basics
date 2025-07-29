@@ -40,5 +40,21 @@ test('Should add a product and complete the checkout process', async ({
 
   await page.getByText('Checkout').click();
 
-  await page.locator('[placeholder*="Country"]');
+  await page.locator('[placeholder*="Country"]').pressSequentially('SPA');
+  const options = await page.locator('.ta-item');
+  await options.waitFor();
+  await options.click();
+
+  await expect(page.locator('.user__name label')).toHaveText(
+    process.env.USERNAME
+  );
+  await page.locator('.action__submit').click();
+
+  await expect(page.locator('.hero-primary')).toHaveText(
+    ' Thankyou for the order. '
+  );
+  const orederId = await page
+    .locator('.em-spacer-1 .ng-star-inserted')
+    .textContent();
+  console.log(orederId);
 });
