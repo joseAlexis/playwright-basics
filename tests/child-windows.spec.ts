@@ -3,6 +3,9 @@ import test, { BrowserContext, expect, Page } from "@playwright/test";
 let context: BrowserContext;
 let page: Page;
 
+/**
+ * Adding base URL here as Im using mutiple sites for practice and learning
+ */
 test.use({ baseURL: "https://the-internet.herokuapp.com" });
 
 test.beforeEach(async ({ browser }) => {
@@ -30,7 +33,7 @@ test("should open a new window", async () => {
   await context.close();
 });
 
-test("should opne a new page using promise.all", async () => {
+test("should open a new page using promise.all", async () => {
   await page.click("text=Click Here");
 
   // Promises have 3 states: pending, fulfilled, rejected

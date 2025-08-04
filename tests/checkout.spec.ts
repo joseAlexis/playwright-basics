@@ -1,5 +1,7 @@
 import test, { expect } from '@playwright/test';
 
+test.use({ baseURL: 'https://rahulshettyacademy.com' });
+
 test.beforeEach(async ({ page }) => {
   const getProductsPromise = page.waitForResponse('**/get-all-products');
   await page.goto('/client/#/auth/login');
@@ -53,8 +55,23 @@ test('Should add a product and complete the checkout process', async ({
   await expect(page.locator('.hero-primary')).toHaveText(
     ' Thankyou for the order. '
   );
-  const orederId = await page
+  const orderId = await page
     .locator('.em-spacer-1 .ng-star-inserted')
     .textContent();
-  console.log(orederId);
+
+  await page.locator('button[routerlink*="/myorders"]').click();
+  await page.locator('tbody').waitFor();
+  const rows = await page.locator('tbody tr');
+
+  for (let i = 0; i < (await rows.count()); i++) {
+    const rowOrderId = await rows.nth(i).locator('th').textContent();
+
+    if (orderId.includes(rowOrderId)) {
+      await rows.nth(i).locator('button').first().click();
+      break;
+    }
+  }
+
+  const orderDetails = await page.locator('.col-text').textContent();
+  expect(orderId.includes(orderDetails)).toBeTruthy();
 });
