@@ -25,7 +25,7 @@ test('Should add a product and complete the checkout process', async ({
   for (let i = 0; i < (await items.count()); i++) {
     const currentName = await items.nth(i).locator('b').textContent();
 
-    if (currentName === itemName) {
+    if (currentName.includes(itemName)) {
       await items.nth(i).locator("text=' Add To Cart'").click();
       const notification = page.locator('#toast-container');
       await expect(notification).toBeVisible();

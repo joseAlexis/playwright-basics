@@ -29,7 +29,7 @@ export default defineConfig({
     baseURL: "",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    trace: "on",
 
     /* Save screenshots for failed tests 
       only-on-failure: only save screenshots for failed tests
