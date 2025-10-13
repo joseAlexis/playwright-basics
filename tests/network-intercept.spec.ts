@@ -45,3 +45,28 @@ test('Should display a message when no orders are created', async ({
   await page.locator("button[routerlink*='myorders']").click();
   await page.waitForResponse(url);
 });
+
+test('Should not display orders that does not belong to the current user', async ({
+  page,
+}) => {
+  await page.goto('/client/#/dashboard/myorders');
+  await page.locator('tbody').waitFor();
+  const url =
+    'https://rahulshettyacademy.com/api/ecom/order/get-orders-details';
+  await page.route(`${url}?id=*`, (route) =>
+    route.continue({
+      url: `${url}?id=6883ae356f585eb60d43139a`,
+    })
+  );
+  await page.locator('button').filter({ hasText: 'View' }).first().click();
+  await expect(page.locator('p').last()).toHaveText(
+    'You are not authorize to view this order'
+  );
+});
+
+test.only('Should do some visual regression testing of the orders page', async ({
+  page,
+}) => {
+  await page.goto('/client/#/dashboard/myorders');
+  await expect(await page.screenshot()).toMatchSnapshot('orders.png');
+});
