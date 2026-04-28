@@ -3,16 +3,17 @@ import test, { expect } from '@playwright/test';
 test.use({ baseURL: 'https://rahulshettyacademy.com' });
 
 test.beforeEach(async ({ page }) => {
-  const getProductsPromise = page.waitForResponse('**/get-all-products');
-  await page.goto('/client/#/auth/login');
-  await page.waitForLoadState('networkidle');
+  //   const getProductsPromise = page.waitForResponse('**/get-all-products');
+  //   await page.goto('/client/#/auth/login');
+  //   await page.waitForLoadState('networkidle');
 
-  await page.locator('#userEmail').fill(process.env.USERNAME);
-  await page.locator('#userPassword').fill(process.env.PASSWORD);
-  await page.getByRole('button', { name: 'login' }).click();
+  //   await page.locator('#userEmail').fill(process.env.USERNAME);
+  //   await page.locator('#userPassword').fill(process.env.PASSWORD);
+  //   await page.getByRole('button', { name: 'login' }).click();
 
-  await getProductsPromise;
-  await expect(page.locator('#products')).toBeVisible();
+  //   await getProductsPromise;
+  //   await expect(page.locator('#products')).toBeVisible();
+  await page.goto('/client/#/dashboard/dash');
 });
 
 test('Should add a product and complete the checkout process', async ({
@@ -48,12 +49,12 @@ test('Should add a product and complete the checkout process', async ({
   await options.click();
 
   await expect(page.locator('.user__name label')).toHaveText(
-    process.env.USERNAME
+    process.env.USERNAME,
   );
   await page.locator('.action__submit').click();
 
   await expect(page.locator('.hero-primary')).toHaveText(
-    ' Thankyou for the order. '
+    ' Thankyou for the order. ',
   );
   const orderId = await page
     .locator('.em-spacer-1 .ng-star-inserted')

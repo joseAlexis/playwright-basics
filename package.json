@@ -13,8 +13,11 @@
   "description": "Playwright Basics",
   "devDependencies": {
     "@playwright/test": "^1.54.1",
-    "@types/node": "^24.0.15",
+    "@types/node": "^24.12.2",
     "dotenv": "^17.2.1",
-    "exceljs": "^4.4.0"
+    "exceljs": "^3.4.0"
+  },
+  "dependencies": {
+    "typescript": "^6.0.3"
   }
 }

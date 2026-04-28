@@ -15,7 +15,7 @@ test.beforeAll(async () => {
   token = await apiUtils.getNewToken();
   orderId = await apiUtils.createOrder(
     'Costa Rica',
-    '68a961459320a140fe1ca57a'
+    '68a961459320a140fe1ca57a',
   );
 });
 
@@ -56,17 +56,28 @@ test('Should not display orders that does not belong to the current user', async
   await page.route(`${url}?id=*`, (route) =>
     route.continue({
       url: `${url}?id=6883ae356f585eb60d43139a`,
-    })
+    }),
   );
   await page.locator('button').filter({ hasText: 'View' }).first().click();
   await expect(page.locator('p').last()).toHaveText(
-    'You are not authorize to view this order'
+    'You are not authorize to view this order',
   );
 });
 
-test.only('Should do some visual regression testing of the orders page', async ({
+test('Should do some visual regression testing of the orders page', async ({
   page,
 }) => {
   await page.goto('/client/#/dashboard/myorders');
   await expect(await page.screenshot()).toMatchSnapshot('orders.png');
+});
+
+test('Should not get the order from a different user', async ({ page }) => {
+  await page.route('url/*', (route) => {
+    // you can also modify the request body, headers, method, etc. by passing an object to the continue method
+    route.continue({ url: 'url/anotherUserId' });
+  });
+  await page.locator("button:has-text('View')").click();
+  await expect(page.locator('p').last()).toHaveText(
+    'You are not authorize to view this order',
+  );
 });

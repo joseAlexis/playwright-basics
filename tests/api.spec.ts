@@ -1,8 +1,8 @@
 import { test, expect, request } from '@playwright/test';
 import { APIUtils } from '../utils/apiUtils';
 
-let token;
-let orderId;
+let token:string;
+let orderId:string;
 
 test.use({ baseURL: 'https://rahulshettyacademy.com' });
 

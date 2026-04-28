@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "commonjs",
-    "moduleResolution": "Node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "esModuleInterop": true,
+    "strict": true,
     "sourceMap": true,
-    "outDir": "../tests-out"
+    "outDir": "../tests-out",
+    "types": ["node", "playwright"]
   }
 }
