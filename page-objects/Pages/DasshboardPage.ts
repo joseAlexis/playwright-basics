@@ -12,6 +12,11 @@ export class DashboardPage {
     this.items = page.locator('.card-body');
   }
 
+  async goto() {
+    await this.page.goto('/client/#/dashboard');
+    await this.page.waitForLoadState('networkidle');
+  }
+
   async addItemToCart(itemName: string) {
     const item = this.items.filter({ hasText: itemName });
     await item.locator("text=' Add To Cart'").click();

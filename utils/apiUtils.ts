@@ -5,12 +5,11 @@ export class APIUtils {
   private username: string;
   private password: string;
   private headers;
-  private _token;
 
   constructor(
     apiContext: APIRequestContext,
     username: string,
-    password: string
+    password: string,
   ) {
     this.apiContext = apiContext;
     this.username = username;
@@ -37,6 +36,27 @@ export class APIUtils {
     return body.token;
   }
 
+  async getProducts() {
+    const data = {
+      productName: '',
+      minPrice: null,
+      maxPrice: null,
+      productCategory: [],
+      productSubCategory: [],
+      productFor: [],
+    };
+    
+    const response = this.apiContext.post(
+      '/api/ecom/product/get-all-products',
+      {
+        headers: this.headers,
+        data,
+      },
+    );
+    const body = await (await response).json();
+    return body;
+  }
+
   async createOrder(country: string, productOrderedId: string) {
     const data = {
       orders: [{ country, productOrderedId }],
@@ -47,13 +67,13 @@ export class APIUtils {
       {
         data,
         headers: this.headers,
-      }
+      },
     );
-    const body = await response.json();
+    const body = await (await response).json();
     return body.orders[0];
   }
 
-  public get token() {
-    return this._token;
-  }
+  // public get token() {
+  //   return this._token;
+  // }
 }

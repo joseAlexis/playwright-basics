@@ -6,5 +6,4 @@ test("Download Excel and compare against web ui", async ({ page }) => {
   await page.goto("/upload-download-test/index.html");
   await page.locator("#downloadButton").click();
   await downloadPromise
-
 });

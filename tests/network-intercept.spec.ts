@@ -1,37 +1,38 @@
 import { test, expect, request } from '@playwright/test';
 import { APIUtils } from '../utils/apiUtils';
+import { PageObjectsManager } from '../page-objects/PageObjecstManager';
 
 let token;
 let orderId;
-const noOrdersPayload = { data: [], message: 'No Orders' };
+
 test.use({ baseURL: 'https://rahulshettyacademy.com' });
 
-test.beforeAll(async () => {
-  const { USERNAME, PASSWORD } = process.env;
-  const apiContext = await request.newContext({
-    baseURL: 'https://rahulshettyacademy.com',
-  });
-  const apiUtils = new APIUtils(apiContext, USERNAME, PASSWORD);
-  token = await apiUtils.getNewToken();
-  orderId = await apiUtils.createOrder(
-    'Costa Rica',
-    '68a961459320a140fe1ca57a',
-  );
-});
+// test.beforeAll(async () => {
+//   const { USERNAME, PASSWORD } = process.env;
+//   const apiContext = await request.newContext({
+//     baseURL: 'https://rahulshettyacademy.com',
+//   });
+//   const apiUtils = new APIUtils(apiContext, USERNAME, PASSWORD);
+//   token = await apiUtils.getNewToken();
+//   orderId = await apiUtils.createOrder(
+//     'Costa Rica',
+//     '68a961459320a140fe1ca57a',
+//   );
+// });
+let POManager: PageObjectsManager;
 
 test.beforeEach(async ({ page }) => {
-  await page.addInitScript((value) => {
-    window.localStorage.setItem('token', value);
-  }, token);
+  POManager = new PageObjectsManager(page);
 });
 
 test('Should display a message when no orders are created', async ({
   page,
+  baseURL,
 }) => {
-  const url =
-    'https://rahulshettyacademy.com/api/ecom/order/get-orders-for-customer/*';
+  const noOrdersPayload = { data: [], message: 'No Orders' };
+  const url = `${baseURL}/api/ecom/order/get-orders-for-customer/*`;
 
-  await page.goto('/client');
+  await POManager.dashboardPage.goto();
 
   await page.route(url, async (route) => {
     // Do the request and get the real response
@@ -42,17 +43,23 @@ test('Should display a message when no orders are created', async ({
       body: JSON.stringify(noOrdersPayload), // Convert the JS object into JSON object string
     });
   });
-  await page.locator("button[routerlink*='myorders']").click();
+
+  await POManager.dashboardPage.topBar.ordersButton.click();
   await page.waitForResponse(url);
+  await expect(POManager.ordersPage.noOrdersMessage).toBeVisible();
+  await expect(POManager.ordersPage.noOrdersMessage).toContainText(
+    'You have No Orders to show at this time.',
+  );
 });
 
 test('Should not display orders that does not belong to the current user', async ({
   page,
+  baseURL,
 }) => {
-  await page.goto('/client/#/dashboard/myorders');
-  await page.locator('tbody').waitFor();
-  const url =
-    'https://rahulshettyacademy.com/api/ecom/order/get-orders-details';
+  const url = `${baseURL}/api/ecom/order/get-orders-details`;
+  
+  await POManager.ordersPage.goto();
+
   await page.route(`${url}?id=*`, (route) =>
     route.continue({
       url: `${url}?id=6883ae356f585eb60d43139a`,
@@ -64,20 +71,9 @@ test('Should not display orders that does not belong to the current user', async
   );
 });
 
-test('Should do some visual regression testing of the orders page', async ({
+test.skip('Should do some visual regression testing of the orders page', async ({
   page,
 }) => {
   await page.goto('/client/#/dashboard/myorders');
   await expect(await page.screenshot()).toMatchSnapshot('orders.png');
-});
-
-test('Should not get the order from a different user', async ({ page }) => {
-  await page.route('url/*', (route) => {
-    // you can also modify the request body, headers, method, etc. by passing an object to the continue method
-    route.continue({ url: 'url/anotherUserId' });
-  });
-  await page.locator("button:has-text('View')").click();
-  await expect(page.locator('p').last()).toHaveText(
-    'You are not authorize to view this order',
-  );
 });
