@@ -1,6 +1,6 @@
 
 import { test as setup, expect, Page } from '@playwright/test';
-import { LoginPage } from '../../page-objects/LoginPage';
+import { LoginPage } from '../../page-objects/Pages/LoginPage';
 import path from 'path';
 import fs from 'fs';
 

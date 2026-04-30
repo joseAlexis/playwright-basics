@@ -8,6 +8,9 @@ let page: Page;
  */
 test.use({ baseURL: "https://the-internet.herokuapp.com" });
 
+/**
+ * Manually create a new context and page for each test, and close them after each test
+*/
 test.beforeEach(async ({ browser }) => {
   context = await browser.newContext();
   page = await context.newPage();
